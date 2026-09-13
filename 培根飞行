@@ -1,694 +1,854 @@
--- 培根飞行脚本
-local main = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local up = Instance.new("TextButton")
-local down = Instance.new("TextButton")
-local onof = Instance.new("TextButton")
-local TextLabel = Instance.new("TextLabel")
-local plus = Instance.new("TextButton")
-local speed = Instance.new("TextLabel")
-local mine = Instance.new("TextButton")
-local closebutton = Instance.new("TextButton")
-local mini = Instance.new("TextButton")
-local mini2 = Instance.new("TextButton")
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FE 培根脚本 · 恶搞附属 v2.0</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 30% 20%, #10141e 0%, #07090f 60%, #04060a 100%);
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    overflow: hidden;
+    color: #ecf0f8;
+  }
 
--- UI启动动画
-local TweenService = game:GetService("TweenService")
+  /* ========== 背景光斑 ========== */
+  .bg-glow {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(circle at 15% 25%, rgba(0,224,180,0.18), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(155,90,255,0.15), transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(0,150,255,0.08), transparent 60%);
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); }
+    100% { transform: translate(-3%, 2%) scale(1.06); }
+  }
 
-main.Name = "main"
-main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-main.ResetOnSpawn = false
+  /* ========== 主容器 ========== */
+  .app {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
 
-Frame.Parent = main
-Frame.BackgroundColor3 = Color3.fromRGB(20, 25, 45) -- 偏蓝的黑色
-Frame.BorderColor3 = Color3.fromRGB(255, 255, 255) -- 白色边框
-Frame.BorderSizePixel = 2
-Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
-Frame.Size = UDim2.new(0, 190, 0, 57)
-Frame.BackgroundTransparency = 1 -- 初始透明用于动画
+  .panel {
+    width: 360px; max-width: 100%;
+    height: 620px; max-height: 94vh;
+    background: linear-gradient(160deg, rgba(22,26,38,0.96), rgba(10,12,18,0.98));
+    border-radius: 20px;
+    border: 1px solid rgba(0,224,180,0.25);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 0 60px rgba(0,224,180,0.18),
+      0 30px 80px rgba(0,0,0,0.7);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    animation: panelIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
 
--- 添加圆角
-UICorner.Parent = Frame
-UICorner.CornerRadius = UDim.new(0, 12)
+  /* ========== 顶栏 ========== */
+  .titlebar {
+    height: 52px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    cursor: grab;
+    position: relative;
+  }
+  .titlebar:active { cursor: grabbing; }
 
-up.Name = "up"
-up.Parent = Frame
-up.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-up.Size = UDim2.new(0, 44, 0, 28)
-up.Font = Enum.Font.SourceSans
-up.Text = "上"
-up.TextColor3 = Color3.fromRGB(255, 255, 255)
-up.TextSize = 16.000
+  .logo {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(135deg, #00e0b4, #007a5c);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px rgba(0,224,180,0.5);
+    position: relative;
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  @keyframes logoPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(0,224,180,0.5); }
+    50%     { box-shadow: 0 0 32px rgba(0,224,180,0.9); }
+  }
 
-down.Name = "down"
-down.Parent = Frame
-down.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-down.Position = UDim2.new(0, 0, 0.491228074, 0)
-down.Size = UDim2.new(0, 44, 0, 28)
-down.Font = Enum.Font.SourceSans
-down.Text = "下"
-down.TextColor3 = Color3.fromRGB(255, 255, 255)
-down.TextSize = 16.000
+  .title-text { flex: 1; min-width: 0; }
+  .title-text h1 {
+    font-size: 14px; font-weight: 700; letter-spacing: 0.3px;
+    background: linear-gradient(90deg, #ffd23c, #fff5b8, #ffd23c);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .title-text p {
+    font-size: 10px; color: #7a8298; margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
 
-onof.Name = "onof"
-onof.Parent = Frame
-onof.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-onof.Position = UDim2.new(0.702823281, 0, 0.491228074, 0)
-onof.Size = UDim2.new(0, 56, 0, 28)
-onof.Font = Enum.Font.SourceSans
-onof.Text = "飞行"
-onof.TextColor3 = Color3.fromRGB(255, 255, 255)
-onof.TextSize = 16.000
+  .win-btns { display: flex; gap: 6px; }
+  .win-btn {
+    width: 28px; height: 28px; border-radius: 9px;
+    border: none; cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    color: #96a0b6; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .win-btn:hover { background: rgba(255,255,255,0.14); color: #fff; transform: scale(1.08); }
+  .win-btn.close:hover { background: linear-gradient(135deg, #ff465a, #b81e30); color: #fff; }
 
-TextLabel.Parent = Frame
-TextLabel.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-TextLabel.Position = UDim2.new(0.469327301, 0, 0, 0)
-TextLabel.Size = UDim2.new(0, 100, 0, 28)
-TextLabel.Font = Enum.Font.SourceSansBold
-TextLabel.Text = "培根飞行"
-TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel.TextScaled = true
-TextLabel.TextSize = 14.000
-TextLabel.TextWrapped = true
+  /* ========== 标签栏 ========== */
+  .tabs {
+    display: flex; flex-shrink: 0;
+    padding: 8px 12px 0;
+    gap: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .tab {
+    flex: 1; padding: 9px 0;
+    border: none; background: transparent;
+    color: #7a8298; font-size: 12px; font-weight: 600;
+    cursor: pointer; border-radius: 10px 10px 0 0;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    font-family: inherit;
+  }
+  .tab:hover { color: #cfd6e6; background: rgba(255,255,255,0.04); }
+  .tab.active {
+    color: #00e0b4;
+    background: rgba(0,224,180,0.08);
+  }
+  .tab.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 15%; right: 15%;
+    height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, #00e0b4, transparent);
+    box-shadow: 0 0 12px #00e0b4;
+  }
 
-plus.Name = "plus"
-plus.Parent = Frame
-plus.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-plus.Position = UDim2.new(0.231578946, 0, 0, 0)
-plus.Size = UDim2.new(0, 45, 0, 28)
-plus.Font = Enum.Font.SourceSansBold
-plus.Text = "+"
-plus.TextColor3 = Color3.fromRGB(255, 255, 255)
-plus.TextScaled = true
-plus.TextSize = 18.000
-plus.TextWrapped = true
+  /* ========== 内容区 ========== */
+  .content {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: #2a3044 transparent;
+  }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb {
+    background: #2a3044; border-radius: 3px;
+  }
+  .content::-webkit-scrollbar-thumb:hover { background: #3a4260; }
 
-speed.Name = "speed"
-speed.Parent = Frame
-speed.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-speed.Position = UDim2.new(0.468421042, 0, 0.491228074, 0)
-speed.Size = UDim2.new(0, 44, 0, 28)
-speed.Font = Enum.Font.SourceSansBold
-speed.Text = "1"
-speed.TextColor3 = Color3.fromRGB(255, 255, 255)
-speed.TextScaled = true
-speed.TextSize = 14.000
-speed.TextWrapped = true
+  .page { display: none; animation: pageIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateX(8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
 
-mine.Name = "mine"
-mine.Parent = Frame
-mine.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-mine.Position = UDim2.new(0.231578946, 0, 0.491228074, 0)
-mine.Size = UDim2.new(0, 45, 0, 29)
-mine.Font = Enum.Font.SourceSansBold
-mine.Text = "-"
-mine.TextColor3 = Color3.fromRGB(255, 255, 255)
-mine.TextScaled = true
-mine.TextSize = 18.000
-mine.TextWrapped = true
+  .section-label {
+    font-size: 10px; color: #5a6278; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 8px; padding-left: 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-label::before {
+    content: ''; width: 3px; height: 10px; border-radius: 2px;
+    background: linear-gradient(180deg, #00e0b4, #007a5c);
+  }
 
-closebutton.Name = "Close"
-closebutton.Parent = main.Frame
-closebutton.BackgroundColor3 = Color3.fromRGB(40, 45, 75) -- 偏蓝的黑色（稍微深一点）
-closebutton.Font = "SourceSansBold"
-closebutton.Size = UDim2.new(0, 45, 0, 28)
-closebutton.Text = "X"
-closebutton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closebutton.TextSize = 20
-closebutton.Position = UDim2.new(0, 0, -1, 27)
+  /* ========== 玩家卡片 ========== */
+  .player-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; margin-bottom: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative; overflow: hidden;
+  }
+  .player-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: #00e0b4;
+    transform: scaleY(0); transform-origin: center;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .player-card:hover {
+    background: rgba(0,224,180,0.06);
+    border-color: rgba(0,224,180,0.3);
+    transform: translateX(3px);
+  }
+  .player-card.selected {
+    background: linear-gradient(90deg, rgba(0,224,180,0.18), rgba(0,224,180,0.04));
+    border-color: rgba(0,224,180,0.5);
+    box-shadow: 0 0 20px rgba(0,224,180,0.15);
+  }
+  .player-card.selected::before { transform: scaleY(1); }
 
-mini.Name = "minimize"
-mini.Parent = main.Frame
-mini.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-mini.Font = "SourceSansBold"
-mini.Size = UDim2.new(0, 45, 0, 28)
-mini.Text = "_"
-mini.TextColor3 = Color3.fromRGB(255, 255, 255)
-mini.TextSize = 24
-mini.Position = UDim2.new(0, 44, -1, 27)
+  .avatar {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, #2a3044, #1a1e2c);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .player-info { flex: 1; min-width: 0; }
+  .player-name {
+    font-size: 12px; font-weight: 600; color: #ecf0f8;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .player-handle { font-size: 10px; color: #6a7288; margin-top: 1px; }
 
-mini2.Name = "minimize2"
-mini2.Parent = main.Frame
-mini2.BackgroundColor3 = Color3.fromRGB(30, 35, 65) -- 偏蓝的黑色
-mini2.Font = "SourceSansBold"
-mini2.Size = UDim2.new(0, 45, 0, 28)
-mini2.Text = "^"
-mini2.TextColor3 = Color3.fromRGB(255, 255, 255)
-mini2.TextSize = 24
-mini2.Position = UDim2.new(0, 44, -1, 57)
-mini2.Visible = false
+  .badge {
+    font-size: 9px; font-weight: 700;
+    padding: 3px 7px; border-radius: 6px;
+    background: rgba(0,224,180,0.15);
+    color: #00e0b4;
+    letter-spacing: 0.5px;
+    opacity: 0; transform: scale(0.8);
+    transition: all 0.25s;
+  }
+  .player-card.selected .badge { opacity: 1; transform: scale(1); }
 
-speeds = 1
+  /* ========== 模式网格 ========== */
+  .mode-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+  .mode-btn {
+    padding: 12px 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    color: #cfd6e6; font-size: 11px; font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    font-family: inherit; text-align: left;
+    position: relative; overflow: hidden;
+  }
+  .mode-btn .ico { font-size: 15px; }
+  .mode-btn:hover {
+    background: rgba(155,90,255,0.08);
+    border-color: rgba(155,90,255,0.35);
+    transform: translateY(-2px);
+  }
+  .mode-btn.active {
+    background: linear-gradient(135deg, rgba(155,90,255,0.28), rgba(120,60,220,0.12));
+    border-color: rgba(155,90,255,0.6);
+    color: #fff;
+    box-shadow: 0 0 22px rgba(155,90,255,0.25);
+  }
+  .mode-btn.active::after {
+    content: ''; position: absolute; top: 6px; right: 6px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #b45aff;
+    box-shadow: 0 0 10px #b45aff;
+    animation: dotPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: 0.5; transform: scale(0.7); }
+  }
 
--- UI启动动画
-local function playStartAnimation()
-    -- 保存原始大小和位置
-    local originalSize = Frame.Size
-    local originalPosition = Frame.Position
-    
-    -- 初始状态：非常小且透明，位于屏幕中心
-    Frame.Size = UDim2.new(0, 10, 0, 10)
-    Frame.Position = UDim2.new(0.5, -5, 0.5, -5)
-    Frame.BackgroundTransparency = 1
-    Frame.Visible = true
-    
-    -- 第一步：放大到110%并淡入
-    local scaleUp = TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(originalSize.X.Scale * 1.1, originalSize.X.Offset * 1.1, 
-                         originalSize.Y.Scale * 1.1, originalSize.Y.Offset * 1.1),
-        BackgroundTransparency = 0.3
-    })
-    
-    -- 第二步：缩回原始大小并完全显示
-    local scaleBack = TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Size = originalSize,
-        Position = originalPosition,
-        BackgroundTransparency = 0
-    })
-    
-    -- 添加按钮的逐个显示效果
-    local buttons = {up, down, onof, plus, speed, mine, TextLabel, closebutton, mini}
-    for i, button in ipairs(buttons) do
-        button.Visible = false
-    end
-    
-    -- 执行动画
-    scaleUp:Play()
-    wait(0.5)
-    scaleBack:Play()
-    
-    -- 按钮逐个显示动画
-    wait(0.2)
-    for i, button in ipairs(buttons) do
-        button.Visible = true
-        if button:IsA("TextButton") or button:IsA("TextLabel") then
-            button.TextTransparency = 1
-            local textFadeIn = TweenService:Create(button, TweenInfo.new(0.2), {
-                TextTransparency = 0
-            })
-            textFadeIn:Play()
-        end
-        
-        -- 轻微缩放效果
-        local originalButtonSize = button.Size
-        button.Size = UDim2.new(originalButtonSize.X.Scale * 0.8, originalButtonSize.X.Offset * 0.8,
-                               originalButtonSize.Y.Scale * 0.8, originalButtonSize.Y.Offset * 0.8)
-        local buttonScale = TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Size = originalButtonSize
-        })
-        buttonScale:Play()
-        
-        wait(0.05) -- 按钮之间的延迟
-    end
-end
+  /* ========== 操作按钮 ========== */
+  .action-btn {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 8px;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative; overflow: hidden;
+    letter-spacing: 0.3px;
+  }
+  .action-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 60%);
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .action-btn:hover::before { opacity: 1; }
+  .action-btn:hover { transform: translateY(-2px); }
+  .action-btn:active { transform: translateY(0) scale(0.98); }
 
--- 添加按钮悬停缩放动画
-local function setupButtonHoverAnimations()
-    local buttons = {up, down, onof, plus, mine, closebutton, mini, mini2}
-    
-    for _, button in ipairs(buttons) do
-        local originalSize = button.Size
-        
-        button.MouseEnter:Connect(function()
-            local hoverScale = TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                Size = UDim2.new(originalSize.X.Scale * 1.1, originalSize.X.Offset * 1.1,
-                                originalSize.Y.Scale * 1.1, originalSize.Y.Offset * 1.1)
-            })
-            hoverScale:Play()
-        end)
-        
-        button.MouseLeave:Connect(function()
-            local resetScale = TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Size = originalSize
-            })
-            resetScale:Play()
-        end)
-    end
-end
+  .btn-start {
+    background: linear-gradient(135deg, #00c896, #008060);
+    box-shadow: 0 4px 20px rgba(0,200,150,0.35), 0 0 0 1px rgba(0,224,180,0.4) inset;
+  }
+  .btn-start:hover { box-shadow: 0 6px 30px rgba(0,200,150,0.55), 0 0 0 1px rgba(0,224,180,0.6) inset; }
 
--- 玩家死亡时保持UI
-game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    -- 确保UI仍然存在
-    if not main or not main.Parent then
-        main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    end
-    wait(0.5)
-    if game.Players.LocalPlayer.Character then
-        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
-        game.Players.LocalPlayer.Character.Animate.Disabled = false
-    end
-end)
+  .btn-stop {
+    background: linear-gradient(135deg, #ff465a, #a01828);
+    box-shadow: 0 4px 20px rgba(255,70,90,0.3), 0 0 0 1px rgba(255,70,90,0.4) inset;
+  }
+  .btn-stop:hover { box-shadow: 0 6px 30px rgba(255,70,90,0.5), 0 0 0 1px rgba(255,70,90,0.6) inset; }
 
--- 确保角色移除时UI不消失
-game.Players.LocalPlayer.CharacterRemoving:Connect(function()
-    -- 这里不执行任何操作，让UI保持显示
-end)
+  .btn-crash {
+    background: linear-gradient(135deg, #ff3c3c, #8a0e0e);
+    box-shadow: 0 4px 20px rgba(255,60,60,0.3), 0 0 0 1px rgba(255,60,60,0.4) inset;
+  }
+  .btn-crash.active {
+    background: linear-gradient(135deg, #b81e30, #5a0a18);
+    animation: crashPulse 0.8s ease-in-out infinite;
+  }
+  @keyframes crashPulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(255,60,60,0.3), 0 0 0 1px rgba(255,60,60,0.4) inset; }
+    50%     { box-shadow: 0 4px 30px rgba(255,60,60,0.8), 0 0 0 1px rgba(255,120,120,0.8) inset; }
+  }
 
-local speaker = game:GetService("Players").LocalPlayer
+  .btn-mystery {
+    background: linear-gradient(135deg, #a04cff, #5a1ea8);
+    box-shadow: 0 4px 20px rgba(160,76,255,0.35), 0 0 0 1px rgba(180,90,255,0.4) inset;
+  }
+  .btn-mystery.loaded {
+    background: linear-gradient(135deg, #3c8a5a, #1a5030);
+    box-shadow: 0 4px 20px rgba(60,200,120,0.3), 0 0 0 1px rgba(80,220,140,0.4) inset;
+  }
+  .btn-mystery .ico {
+    animation: mysterySpin 4s linear infinite;
+    display: inline-block;
+  }
+  @keyframes mysterySpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
 
-local chr = game.Players.LocalPlayer.Character
-local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+  /* ========== 双按钮行 ========== */
+  .btn-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .btn-row .action-btn { margin-bottom: 0; }
 
-nowe = false
+  /* ========== 状态栏 ========== */
+  .footer {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.25));
+    display: flex; align-items: center; gap: 8px;
+  }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #00e0b4;
+    box-shadow: 0 0 10px #00e0b4;
+    animation: dotBlink 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes dotBlink {
+    0%,100% { opacity: 1; }
+    50%     { opacity: 0.4; }
+  }
+  .status-text {
+    font-size: 11px; color: #8a92a8;
+    flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color 0.3s;
+  }
+  .status-text.ok { color: #00e0b4; }
+  .status-text.err { color: #ff6a7a; }
+  .status-text.warn { color: #ffd23c; }
 
-game:GetService("StarterGui"):SetCore("SendNotification", { 
-    Title = "培根飞行";
-    Text = "注入成功！";
-    Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150";
-    Duration = 5;
-})
+  /* ========== 通知 ========== */
+  .notifications {
+    position: fixed; top: 20px; right: 20px;
+    z-index: 9999;
+    display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none;
+  }
+  .notif {
+    min-width: 220px; max-width: 300px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, rgba(22,26,38,0.98), rgba(14,16,24,0.98));
+    border: 1px solid rgba(0,224,180,0.35);
+    border-left: 3px solid #00e0b4;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,224,180,0.15);
+    color: #ecf0f8;
+    animation: notifIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: auto;
+  }
+  .notif.err { border-color: rgba(255,70,90,0.4); border-left-color: #ff465a; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,70,90,0.2); }
+  .notif.warn { border-color: rgba(255,210,60,0.4); border-left-color: #ffd23c; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,210,60,0.2); }
+  .notif.purple { border-color: rgba(180,90,255,0.4); border-left-color: #b45aff; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(180,90,255,0.2); }
+  .notif-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .notif-body { font-size: 11px; color: #96a0b6; line-height: 1.4; }
+  @keyframes notifIn {
+    from { opacity: 0; transform: translateX(30px) scale(0.9); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  .notif.out {
+    animation: notifOut 0.3s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+  }
+  @keyframes notifOut {
+    to { opacity: 0; transform: translateX(30px) scale(0.9); }
+  }
 
-Frame.Active = true
-Frame.Draggable = true
+  /* ========== 神秘脚本运行指示 ========== */
+  .mystery-ring {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: linear-gradient(135deg, #a04cff, #5a1ea8);
+    display: none; align-items: center; justify-content: center;
+    font-size: 20px; color: #fff;
+    cursor: pointer; z-index: 9998;
+    box-shadow: 0 0 30px rgba(160,76,255,0.6);
+    border: 2px solid rgba(255,255,255,0.25);
+    transition: transform 0.25s;
+  }
+  .mystery-ring.show { display: flex; animation: ringIn 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+  .mystery-ring:hover { transform: scale(1.1) rotate(15deg); }
+  @keyframes ringIn {
+    from { opacity: 0; transform: scale(0) rotate(-180deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0); }
+  }
 
--- 启动UI动画
-playStartAnimation()
-setupButtonHoverAnimations()
+  /* ========== 空状态 ========== */
+  .empty {
+    text-align: center; padding: 30px 12px;
+    color: #5a6278; font-size: 11px;
+  }
+  .empty .em-ico { font-size: 32px; margin-bottom: 8px; opacity: 0.4; display: block; }
 
-onof.MouseButton1Down:connect(function()
-    if nowe == true then
-        nowe = false
+  /* ========== 提示 ========== */
+  .hint {
+    font-size: 10px; color: #5a6278;
+    padding: 8px 4px 2px;
+    line-height: 1.5;
+    border-top: 1px dashed rgba(255,255,255,0.06);
+    margin-top: 10px;
+  }
+  .hint kbd {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 9px; font-family: monospace;
+    color: #cfd6e6;
+  }
 
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, true)
-        speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
-    else 
-        nowe = true
+  @media (max-width: 420px) {
+    .panel { width: 100%; height: 100%; max-height: 100vh; border-radius: 0; }
+    .app { padding: 0; }
+  }
+</style>
+</head>
+<body>
 
-        for i = 1, speeds do
-            spawn(function()
-                local hb = game:GetService("RunService").Heartbeat
-                tpwalking = true
-                local chr = game.Players.LocalPlayer.Character
-                local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-                while tpwalking and hb:Wait() and chr and hum and hum.Parent do
-                    if hum.MoveDirection.Magnitude > 0 then
-                        chr:TranslateBy(hum.MoveDirection)
-                    end
-                end
-            end)
-        end
-        
-        game.Players.LocalPlayer.Character.Animate.Disabled = true
-        local Char = game.Players.LocalPlayer.Character
-        local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+<div class="bg-glow"></div>
 
-        for i,v in next, Hum:GetPlayingAnimationTracks() do
-            v:AdjustSpeed(0)
-        end
-        
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
-        speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
-    end
+<div class="app">
+  <div class="panel" id="panel">
 
-    if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-        local plr = game.Players.LocalPlayer
-        local torso = plr.Character.Torso
-        local flying = true
-        local deb = true
-        local ctrl = {f = 0, b = 0, l = 0, r = 0}
-        local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        local maxspeed = 50
-        local speed = 0
+    <!-- 顶栏 -->
+    <div class="titlebar" id="titlebar">
+      <div class="logo">🥓</div>
+      <div class="title-text">
+        <h1>FE 培根脚本 · 恶搞附属</h1>
+        <p>v2.0 · PREMIUM EDITION</p>
+      </div>
+      <div class="win-btns">
+        <button class="win-btn" id="btnMin" title="最小化">−</button>
+        <button class="win-btn close" id="btnClose" title="关闭">×</button>
+      </div>
+    </div>
 
-        local bg = Instance.new("BodyGyro", torso)
-        bg.P = 9e4
-        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.cframe = torso.CFrame
-        local bv = Instance.new("BodyVelocity", torso)
-        bv.velocity = Vector3.new(0, 0.1, 0)
-        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-        
-        if nowe == true then
-            plr.Character.Humanoid.PlatformStand = true
-        end
-        
-        while nowe == true and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0 do
-            game:GetService("RunService").RenderStepped:Wait()
+    <!-- 标签栏 -->
+    <div class="tabs">
+      <button class="tab active" data-tab="players">👥 目标</button>
+      <button class="tab" data-tab="modes">🎮 模式</button>
+      <button class="tab" data-tab="system">⚙️ 系统</button>
+    </div>
 
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed + 0.5 + (speed / maxspeed)
-                if speed > maxspeed then
-                    speed = maxspeed
-                end
-            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
-                speed = speed - 1
-                if speed < 0 then
-                    speed = 0
-                end
-            end
-            
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f + ctrl.b)) + 
-                    ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - 
-                    game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed
-                lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f + lastctrl.b)) + 
-                    ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l + lastctrl.r, (lastctrl.f + lastctrl.b) * 0.2, 0).p) - 
-                    game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed
-            else
-                bv.velocity = Vector3.new(0, 0, 0)
-            end
-            
-            bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f + ctrl.b) * 50 * speed / maxspeed), 0, 0)
-        end
-        
-        ctrl = {f = 0, b = 0, l = 0, r = 0}
-        lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        speed = 0
-        
-        if bg then bg:Destroy() end
-        if bv then bv:Destroy() end
-        
-        if plr.Character and plr.Character.Humanoid then
-            plr.Character.Humanoid.PlatformStand = false
-        end
-        
-        if game.Players.LocalPlayer.Character then
-            game.Players.LocalPlayer.Character.Animate.Disabled = false
-        end
-        
-        tpwalking = false
-    else
-        local plr = game.Players.LocalPlayer
-        local UpperTorso = plr.Character.UpperTorso
-        local flying = true
-        local deb = true
-        local ctrl = {f = 0, b = 0, l = 0, r = 0}
-        local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        local maxspeed = 50
-        local speed = 0
+    <!-- 内容区 -->
+    <div class="content" id="content">
 
-        local bg = Instance.new("BodyGyro", UpperTorso)
-        bg.P = 9e4
-        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.cframe = UpperTorso.CFrame
-        local bv = Instance.new("BodyVelocity", UpperTorso)
-        bv.velocity = Vector3.new(0, 0.1, 0)
-        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-        
-        if nowe == true then
-            plr.Character.Humanoid.PlatformStand = true
-        end
-        
-        while nowe == true and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0 do
-            wait()
+      <!-- 目标页 -->
+      <div class="page active" data-page="players">
+        <div class="section-label">选择目标玩家</div>
+        <div id="playerList"></div>
+      </div>
 
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed + 0.5 + (speed / maxspeed)
-                if speed > maxspeed then
-                    speed = maxspeed
-                end
-            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
-                speed = speed - 1
-                if speed < 0 then
-                    speed = 0
-                end
-            end
-            
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f + ctrl.b)) + 
-                    ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - 
-                    game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed
-                lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f + lastctrl.b)) + 
-                    ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l + lastctrl.r, (lastctrl.f + lastctrl.b) * 0.2, 0).p) - 
-                    game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed
-            else
-                bv.velocity = Vector3.new(0, 0, 0)
-            end
+      <!-- 模式页 -->
+      <div class="page" data-page="modes">
+        <div class="section-label">选择附身模式</div>
+        <div class="mode-grid" id="modeGrid"></div>
+        <div class="hint">
+          提示：附身会持续同步目标的位置。<br>
+          建议保持 <kbd>停止</kbd> 按钮随时可用。
+        </div>
+      </div>
 
-            bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f + ctrl.b) * 50 * speed / maxspeed), 0, 0)
-        end
-        
-        ctrl = {f = 0, b = 0, l = 0, r = 0}
-        lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        speed = 0
-        
-        if bg then bg:Destroy() end
-        if bv then bv:Destroy() end
-        
-        if plr.Character and plr.Character.Humanoid then
-            plr.Character.Humanoid.PlatformStand = false
-        end
-        
-        if game.Players.LocalPlayer.Character then
-            game.Players.LocalPlayer.Character.Animate.Disabled = false
-        end
-        
-        tpwalking = false
-    end
-end)
+      <!-- 系统页 -->
+      <div class="page" data-page="system">
+        <div class="section-label">附身控制</div>
+        <div class="btn-row" style="margin-bottom:14px;">
+          <button class="action-btn btn-start" id="btnStart">▶️ 开始</button>
+          <button class="action-btn btn-stop" id="btnStop">⏹️ 停止</button>
+        </div>
 
-local tis
+        <div class="section-label">危险操作</div>
+        <button class="action-btn btn-crash" id="btnCrash">💥 崩服</button>
 
-up.MouseButton1Down:connect(function()
-    tis = up.MouseEnter:connect(function()
-        while tis do
-            wait()
-            if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.HumanoidRootPart then
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = 
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 1, 0)
-            end
-        end
-    end)
-end)
+        <div class="section-label">扩展功能</div>
+        <button class="action-btn btn-mystery" id="btnMystery">
+          <span class="ico">❓</span> 神秘脚本
+        </button>
 
-up.MouseLeave:connect(function()
-    if tis then
-        tis:Disconnect()
-        tis = nil
-    end
-end)
+        <div class="hint">
+          <kbd>K</kbd> 显示/隐藏面板 ·
+          <kbd>Esc</kbd> 紧急停止附身
+        </div>
+      </div>
 
-local dis
+    </div>
 
-down.MouseButton1Down:connect(function()
-    dis = down.MouseEnter:connect(function()
-        while dis do
-            wait()
-            if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.HumanoidRootPart then
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = 
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, -1, 0)
-            end
-        end
-    end)
-end)
+    <!-- 状态栏 -->
+    <div class="footer">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-text" id="statusText">状态：等待操作</div>
+    </div>
 
-down.MouseLeave:connect(function()
-    if dis then
-        dis:Disconnect()
-        dis = nil
-    end
-end)
+  </div>
+</div>
 
-plus.MouseButton1Down:connect(function()
-    speeds = speeds + 1
-    speed.Text = tostring(speeds)
-    
-    -- 添加缩放动画
-    local originalSize = speed.Size
-    speed.Size = UDim2.new(originalSize.X.Scale * 1.2, originalSize.X.Offset * 1.2,
-                           originalSize.Y.Scale * 1.2, originalSize.Y.Offset * 1.2)
-    local scaleAnim = TweenService:Create(speed, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = originalSize
-    })
-    scaleAnim:Play()
-    
-    if nowe == true then
-        tpwalking = false
-        for i = 1, speeds do
-            spawn(function()
-                local hb = game:GetService("RunService").Heartbeat
-                tpwalking = true
-                local chr = game.Players.LocalPlayer.Character
-                local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-                while tpwalking and hb:Wait() and chr and hum and hum.Parent do
-                    if hum.MoveDirection.Magnitude > 0 then
-                        chr:TranslateBy(hum.MoveDirection)
-                    end
-                end
-            end)
-        end
-    end
-end)
+<!-- 通知容器 -->
+<div class="notifications" id="notifs"></div>
 
-mine.MouseButton1Down:connect(function()
-    if speeds == 1 then
-        speed.Text = '速度不能为0'
-        
-        -- 添加抖动动画
-        local originalPosition = speed.Position
-        local shakeAnim1 = TweenService:Create(speed, TweenInfo.new(0.1), {
-            Position = UDim2.new(originalPosition.X.Scale, originalPosition.X.Offset - 5, 
-                                originalPosition.Y.Scale, originalPosition.Y.Offset)
-        })
-        local shakeAnim2 = TweenService:Create(speed, TweenInfo.new(0.1), {
-            Position = UDim2.new(originalPosition.X.Scale, originalPosition.X.Offset + 5, 
-                                originalPosition.Y.Scale, originalPosition.Y.Offset)
-        })
-        local resetAnim = TweenService:Create(speed, TweenInfo.new(0.1), {
-            Position = originalPosition
-        })
-        
-        shakeAnim1:Play()
-        wait(0.1)
-        shakeAnim2:Play()
-        wait(0.1)
-        resetAnim:Play()
-        
-        wait(1)
-        speed.Text = tostring(speeds)
-    else
-        speeds = speeds - 1
-        speed.Text = tostring(speeds)
-        
-        -- 添加缩放动画
-        local originalSize = speed.Size
-        speed.Size = UDim2.new(originalSize.X.Scale * 0.8, originalSize.X.Offset * 0.8,
-                               originalSize.Y.Scale * 0.8, originalSize.Y.Offset * 0.8)
-        local scaleAnim = TweenService:Create(speed, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Size = originalSize
-        })
-        scaleAnim:Play()
-        
-        if nowe == true then
-            tpwalking = false
-            for i = 1, speeds do
-                spawn(function()
-                    local hb = game:GetService("RunService").Heartbeat
-                    tpwalking = true
-                    local chr = game.Players.LocalPlayer.Character
-                    local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-                    while tpwalking and hb:Wait() and chr and hum and hum.Parent do
-                        if hum.MoveDirection.Magnitude > 0 then
-                            chr:TranslateBy(hum.MoveDirection)
-                        end
-                    end
-                end)
-            end
-        end
-    end
-end)
+<!-- 神秘脚本运行指示 -->
+<div class="mystery-ring" id="mysteryRing" title="神秘脚本运行中">◈</div>
 
-closebutton.MouseButton1Click:Connect(function()
-    -- 添加关闭动画
-    local fadeOut = TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundTransparency = 1,
-        Size = UDim2.new(0, 10, 0, 10),
-        Position = UDim2.new(0.5, -5, 0.5, -5)
-    })
-    fadeOut:Play()
-    wait(0.3)
-    main:Destroy()
-end)
+<script>
+/* ══════════════════════════════════════════════════════════
+   FE 培根脚本 · 恶搞附属 v2.0
+   UI 重制版 · 更高级、更炫酷、更流畅
+   ══════════════════════════════════════════════════════════ */
 
-mini.MouseButton1Click:Connect(function()
-    -- 添加最小化动画
-    local minimizeAnim = TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 190, 0, 28)
-    })
-    minimizeAnim:Play()
-    
-    up.Visible = false
-    down.Visible = false
-    onof.Visible = false
-    plus.Visible = false
-    speed.Visible = false
-    mine.Visible = false
-    mini.Visible = false
-    TextLabel.Visible = true
-    mini2.Visible = true
-    main.Frame.BackgroundTransparency = 0.8
-    closebutton.Position = UDim2.new(0, 0, -1, 57)
-    TextLabel.Text = "飞行"
-end)
+/* ========== 状态 ========== */
+const STATE = {
+  targetPlayer: null,
+  currentMode: '骑在头上',
+  attaching: false,
+  crashLooping: false,
+  crashTimer: null,
+  mysteryLoaded: false,
+  floatDir: 1,
+  floatOffset: 0,
+  attachmentTimer: null
+};
 
-mini2.MouseButton1Click:Connect(function()
-    -- 添加恢复动画
-    local restoreAnim = TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 190, 0, 57)
-    })
-    restoreAnim:Play()
-    
-    up.Visible = true
-    down.Visible = true
-    onof.Visible = true
-    plus.Visible = true
-    speed.Visible = true
-    mine.Visible = true
-    mini.Visible = true
-    mini2.Visible = false
-    main.Frame.BackgroundTransparency = 0
-    closebutton.Position = UDim2.new(0, 0, -1, 27)
-    TextLabel.Text = "培根飞行"
-end)
+const MODES = [
+  { name: '骑在头上', icon: '⬆️' },
+  { name: '头上旋转', icon: '🌀' },
+  { name: '背在后面', icon: '👥' },
+  { name: '玩家重合', icon: '🔗' },
+  { name: '背后浮动', icon: '🌊' },
+  { name: '固定身后', icon: '📌' },
+  { name: '脚下遁地', icon: '🕳️' }
+];
 
--- 控制键监听
-local UserInputService = game:GetService("UserInputService")
-local ctrl = {f = 0, b = 0, l = 0, r = 0}
+/* 模拟的在线玩家（HTML 演示版） */
+const MOCK_PLAYERS = [
+  { id: 1, name: 'BaconMaster', display: '培根大师', emoji: '🥓', badge: '房主' },
+  { id: 2, name: 'Steve_916',   display: '史蒂夫',   emoji: '🟩', badge: '' },
+  { id: 3, name: 'Creeper_X',   display: '苦力怕',   emoji: '💥', badge: '' },
+  { id: 4, name: 'Zombie_Kill', display: '僵尸杀手', emoji: '🧟', badge: '' }
+];
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    
-    if input.KeyCode == Enum.KeyCode.W then
-        ctrl.f = 1
-    elseif input.KeyCode == Enum.KeyCode.S then
-        ctrl.b = -1
-    elseif input.KeyCode == Enum.KeyCode.A then
-        ctrl.l = -1
-    elseif input.KeyCode == Enum.KeyCode.D then
-        ctrl.r = 1
-    end
-end)
+/* ========== DOM ========== */
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+const panel = $('#panel');
+const titlebar = $('#titlebar');
+const content = $('#content');
+const playerList = $('#playerList');
+const modeGrid = $('#modeGrid');
+const statusText = $('#statusText');
+const statusDot = $('#statusDot');
+const notifs = $('#notifs');
 
-UserInputService.InputEnded:Connect(function(input, gameProcessed)
-    if input.KeyCode == Enum.KeyCode.W then
-        ctrl.f = 0
-    elseif input.KeyCode == Enum.KeyCode.S then
-        ctrl.b = 0
-    elseif input.KeyCode == Enum.KeyCode.A then
-        ctrl.l = 0
-    elseif input.KeyCode == Enum.KeyCode.D then
-        ctrl.r = 0
-    end
-end)
+/* ========== 工具函数 ========== */
+function setStatus(text, type = '') {
+  statusText.textContent = '状态：' + text;
+  statusText.className = 'status-text ' + type;
+  statusDot.style.background = type === 'err' ? '#ff6a7a'
+    : type === 'warn' ? '#ffd23c'
+    : type === 'ok' ? '#00e0b4'
+    : '#00e0b4';
+  statusDot.style.boxShadow = `0 0 10px ${type === 'err' ? '#ff6a7a' : type === 'warn' ? '#ffd23c' : '#00e0b4'}`;
+}
 
--- 确保脚本结束时清理资源
-game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
-    -- 重新设置UI父级以确保它仍然存在
-    if main and not main.Parent then
-        main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    end
-end)
+function notify(title, body, type = '') {
+  const el = document.createElement('div');
+  el.className = 'notif ' + type;
+  el.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  notifs.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 320);
+  }, 2800);
+}
+
+/* ========== 标签切换 ========== */
+$$('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const key = tab.dataset.tab;
+    $$('.page').forEach(p => p.classList.toggle('active', p.dataset.page === key));
+    content.scrollTop = 0;
+  });
+});
+
+/* ========== 渲染玩家列表 ========== */
+function renderPlayers() {
+  playerList.innerHTML = '';
+  if (MOCK_PLAYERS.length === 0) {
+    playerList.innerHTML = `<div class="empty"><span class="em-ico">👻</span>暂无其他玩家</div>`;
+    return;
+  }
+  MOCK_PLAYERS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.dataset.id = p.id;
+    card.innerHTML = `
+      <div class="avatar">${p.emoji}</div>
+      <div class="player-info">
+        <div class="player-name">${p.display}</div>
+        <div class="player-handle">@${p.name}</div>
+      </div>
+      ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+    `;
+    card.addEventListener('click', () => {
+      $$('.player-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      STATE.targetPlayer = p;
+      setStatus(`已选择玩家 ${p.display}`, 'ok');
+      notify('目标已锁定', `已选择 ${p.display} (@${p.name})`, '');
+    });
+    playerList.appendChild(card);
+  });
+}
+
+/* ========== 渲染模式网格 ========== */
+function renderModes() {
+  modeGrid.innerHTML = '';
+  MODES.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'mode-btn' + (m.name === STATE.currentMode ? ' active' : '');
+    btn.innerHTML = `<span class="ico">${m.icon}</span><span>${m.name}</span>`;
+    btn.addEventListener('click', () => {
+      $$('.mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      STATE.currentMode = m.name;
+      setStatus(`模式切换为 ${m.name}`, '');
+      if (STATE.attaching) {
+        notify('模式已切换', `当前模式：${m.name}`, '');
+      }
+    });
+    modeGrid.appendChild(btn);
+  });
+}
+
+/* ========== 附身逻辑（模拟） ========== */
+function startAttach() {
+  if (!STATE.targetPlayer) {
+    setStatus('错误：请先选择目标玩家', 'err');
+    notify('无法开始', '请先在「目标」页选择一个玩家', 'err');
+    // 自动切到目标页
+    $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'players'));
+    $$('.page').forEach(p => p.classList.toggle('active', p.dataset.page === 'players'));
+    return;
+  }
+  if (STATE.attaching) {
+    notify('提示', '附身已在进行中', 'warn');
+    return;
+  }
+  STATE.attaching = true;
+  setStatus(`附身中 · ${STATE.currentMode}`, 'ok');
+  notify('附身启动', `正在附身 ${STATE.targetPlayer.display}`, '');
+
+  // 模拟：每 1.6 秒更新一次浮动偏移
+  STATE.attachmentTimer = setInterval(() => {
+    if (!STATE.attaching) return;
+    if (STATE.currentMode === '背后浮动') {
+      STATE.floatOffset += STATE.floatDir * 0.4;
+      if (STATE.floatOffset > 2) STATE.floatDir = -1;
+      if (STATE.floatOffset < -2) STATE.floatDir = 1;
+    }
+  }, 200);
+}
+
+function stopAttach() {
+  if (!STATE.attaching) {
+    setStatus('当前未在附身', 'warn');
+    return;
+  }
+  STATE.attaching = false;
+  if (STATE.attachmentTimer) {
+    clearInterval(STATE.attachmentTimer);
+    STATE.attachmentTimer = null;
+  }
+  setStatus('已停止附身', '');
+  notify('已停止', '附身已中断', 'warn');
+}
+
+/* ========== 崩服逻辑（模拟） ========== */
+function toggleCrash() {
+  const btn = $('#btnCrash');
+  if (STATE.crashLooping) {
+    STATE.crashLooping = false;
+    if (STATE.crashTimer) { clearInterval(STATE.crashTimer); STATE.crashTimer = null; }
+    btn.classList.remove('active');
+    btn.innerHTML = '💥 崩服';
+    setStatus('崩服已关闭', '');
+    notify('崩服已停止', '装备循环已中断', 'warn');
+  } else {
+    STATE.crashLooping = true;
+    btn.classList.add('active');
+    btn.innerHTML = '⏹️ 停止崩服';
+    setStatus('崩服中...', 'err');
+    notify('崩服已启动', '正在循环装备/卸下所有物品', 'err');
+    // 模拟循环
+    STATE.crashTimer = setInterval(() => {
+      if (!STATE.crashLooping) return;
+      // 模拟：每 0.1 秒触发一次装备循环
+    }, 100);
+  }
+}
+
+/* ========== 神秘脚本（模拟） ========== */
+function loadMystery() {
+  const btn = $('#btnMystery');
+  if (STATE.mysteryLoaded) {
+    notify('提示', '神秘脚本已在运行中', 'purple');
+    return;
+  }
+  btn.innerHTML = `<span class="ico">⏳</span> 加载中...`;
+  setStatus('神秘脚本加载中...', 'warn');
+
+  setTimeout(() => {
+    STATE.mysteryLoaded = true;
+    btn.classList.add('loaded');
+    btn.innerHTML = `<span class="ico">✅</span> 神秘脚本已启用`;
+    setStatus('神秘脚本已执行', 'ok');
+    notify('神秘脚本', '黑客模拟器 v3.1 已成功注入', 'purple');
+    $('#mysteryRing').classList.add('show');
+  }, 1200);
+}
+
+/* ========== 事件绑定 ========== */
+$('#btnStart').addEventListener('click', startAttach);
+$('#btnStop').addEventListener('click', stopAttach);
+$('#btnCrash').addEventListener('click', toggleCrash);
+$('#btnMystery').addEventListener('click', loadMystery);
+
+$('#btnMin').addEventListener('click', () => {
+  panel.style.transition = 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+  panel.style.transform = 'scale(0.85)';
+  panel.style.opacity = '0';
+  setTimeout(() => {
+    panel.style.transform = '';
+    panel.style.opacity = '';
+    notify('面板已最小化', '按 K 键可重新显示', 'warn');
+  }, 350);
+});
+
+$('#btnClose').addEventListener('click', () => {
+  if (STATE.attaching) stopAttach();
+  if (STATE.crashLooping) toggleCrash();
+  panel.style.transition = 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+  panel.style.transform = 'scale(0.9)';
+  panel.style.opacity = '0';
+  setTimeout(() => {
+    document.querySelector('.app').innerHTML =
+      '<div style="color:#5a6278;font-size:13px;text-align:center;">UI 已关闭 · 刷新页面可重新打开</div>';
+  }, 350);
+});
+
+/* ========== 拖拽 ========== */
+(function makeDraggable() {
+  let dragging = false, startX, startY, origX, origY;
+  titlebar.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.win-btn')) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    const r = panel.getBoundingClientRect();
+    origX = r.left; origY = r.top;
+    panel.style.transition = 'none';
+    document.body.style.userSelect = 'none';
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    panel.style.position = 'fixed';
+    panel.style.margin = '0';
+    panel.style.left = (origX + dx) + 'px';
+    panel.style.top = (origY + dy) + 'px';
+  });
+  window.addEventListener('mouseup', () => {
+    if (dragging) {
+      dragging = false;
+      panel.style.transition = '';
+      document.body.style.userSelect = '';
+    }
+  });
+})();
+
+/* ========== 键盘快捷键 ========== */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'k' || e.key === 'K') {
+    const hidden = panel.style.opacity === '0';
+    if (hidden) {
+      panel.style.opacity = '1';
+      panel.style.transform = 'scale(1)';
+      notify('面板已显示', '按 K 键可再次隐藏', '');
+    } else {
+      panel.style.transition = 'all 0.3s';
+      panel.style.opacity = '0';
+      panel.style.transform = 'scale(0.9)';
+      setTimeout(() => { panel.style.opacity = ''; panel.style.transform = ''; }, 300);
+    }
+  }
+  if (e.key === 'Escape') {
+    if (STATE.attaching) stopAttach();
+    if (STATE.crashLooping) toggleCrash();
+  }
+});
+
+/* ========== 神秘脚本运行指示点击 ========== */
+$('#mysteryRing').addEventListener('click', () => {
+  notify('神秘脚本', '黑客模拟器 v3.1 正在运行中 · 按 K 切换面板', 'purple');
+});
+
+/* ========== 初始化 ========== */
+renderPlayers();
+renderModes();
+setStatus('系统就绪 · 按 K 切换面板', '');
+
+// 延迟欢迎通知
+setTimeout(() => {
+  notify('欢迎使用', 'FE 培根脚本 · 恶搞附属 v2.0', '');
+}, 500);
+setTimeout(() => {
+  notify('提示', '按 K 键可显示/隐藏面板', 'warn');
+}, 1800);
+</script>
+
+</body>
+</html>
