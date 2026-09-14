@@ -1,4 +1,4 @@
--- 培根飞行脚本（青色主题）
+-- 培根飞行脚本（纯青色背景，白色文字）
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
@@ -22,9 +22,8 @@ main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.BackgroundColor3 = Color3.fromRGB(0, 50, 50) -- 深青色
-Frame.BorderColor3 = Color3.fromRGB(0, 200, 200) -- 亮青色边框
-Frame.BorderSizePixel = 2
+Frame.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
+Frame.BorderSizePixel = 0 -- 去掉边框
 Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
 Frame.Size = UDim2.new(0, 190, 0, 57)
 Frame.BackgroundTransparency = 1 -- 初始透明用于动画
@@ -35,107 +34,107 @@ UICorner.CornerRadius = UDim.new(0, 12)
 
 up.Name = "up"
 up.Parent = Frame
-up.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+up.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 up.Size = UDim2.new(0, 44, 0, 28)
 up.Font = Enum.Font.SourceSans
 up.Text = "上"
-up.TextColor3 = Color3.fromRGB(255, 255, 255)
+up.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 up.TextSize = 16.000
 
 down.Name = "down"
 down.Parent = Frame
-down.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+down.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 down.Position = UDim2.new(0, 0, 0.491228074, 0)
 down.Size = UDim2.new(0, 44, 0, 28)
 down.Font = Enum.Font.SourceSans
 down.Text = "下"
-down.TextColor3 = Color3.fromRGB(255, 255, 255)
+down.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 down.TextSize = 16.000
 
 onof.Name = "onof"
 onof.Parent = Frame
-onof.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+onof.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 onof.Position = UDim2.new(0.702823281, 0, 0.491228074, 0)
 onof.Size = UDim2.new(0, 56, 0, 28)
 onof.Font = Enum.Font.SourceSans
 onof.Text = "飞行"
-onof.TextColor3 = Color3.fromRGB(255, 255, 255)
+onof.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 onof.TextSize = 16.000
 
 TextLabel.Parent = Frame
-TextLabel.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+TextLabel.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 TextLabel.Position = UDim2.new(0.469327301, 0, 0, 0)
 TextLabel.Size = UDim2.new(0, 100, 0, 28)
 TextLabel.Font = Enum.Font.SourceSansBold
 TextLabel.Text = "培根飞行"
-TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 TextLabel.TextScaled = true
 TextLabel.TextSize = 14.000
 TextLabel.TextWrapped = true
 
 plus.Name = "plus"
 plus.Parent = Frame
-plus.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+plus.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 plus.Position = UDim2.new(0.231578946, 0, 0, 0)
 plus.Size = UDim2.new(0, 45, 0, 28)
 plus.Font = Enum.Font.SourceSansBold
 plus.Text = "+"
-plus.TextColor3 = Color3.fromRGB(255, 255, 255)
+plus.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 plus.TextScaled = true
 plus.TextSize = 18.000
 plus.TextWrapped = true
 
 speed.Name = "speed"
 speed.Parent = Frame
-speed.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+speed.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 speed.Position = UDim2.new(0.468421042, 0, 0.491228074, 0)
 speed.Size = UDim2.new(0, 44, 0, 28)
 speed.Font = Enum.Font.SourceSansBold
 speed.Text = "1"
-speed.TextColor3 = Color3.fromRGB(255, 255, 255)
+speed.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 speed.TextScaled = true
 speed.TextSize = 14.000
 speed.TextWrapped = true
 
 mine.Name = "mine"
 mine.Parent = Frame
-mine.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+mine.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 mine.Position = UDim2.new(0.231578946, 0, 0.491228074, 0)
 mine.Size = UDim2.new(0, 45, 0, 29)
 mine.Font = Enum.Font.SourceSansBold
 mine.Text = "-"
-mine.TextColor3 = Color3.fromRGB(255, 255, 255)
+mine.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 mine.TextScaled = true
 mine.TextSize = 18.000
 mine.TextWrapped = true
 
 closebutton.Name = "Close"
 closebutton.Parent = main.Frame
-closebutton.BackgroundColor3 = Color3.fromRGB(0, 70, 70) -- 深一点的中青色
+closebutton.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 closebutton.Font = "SourceSansBold"
 closebutton.Size = UDim2.new(0, 45, 0, 28)
 closebutton.Text = "X"
-closebutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closebutton.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 closebutton.TextSize = 20
 closebutton.Position = UDim2.new(0, 0, -1, 27)
 
 mini.Name = "minimize"
 mini.Parent = main.Frame
-mini.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+mini.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 mini.Font = "SourceSansBold"
 mini.Size = UDim2.new(0, 45, 0, 28)
 mini.Text = "_"
-mini.TextColor3 = Color3.fromRGB(255, 255, 255)
+mini.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 mini.TextSize = 24
 mini.Position = UDim2.new(0, 44, -1, 27)
 
 mini2.Name = "minimize2"
 mini2.Parent = main.Frame
-mini2.BackgroundColor3 = Color3.fromRGB(0, 90, 90) -- 中青色
+mini2.BackgroundColor3 = Color3.fromRGB(0, 255, 255) -- 纯青色
 mini2.Font = "SourceSansBold"
 mini2.Size = UDim2.new(0, 45, 0, 28)
 mini2.Text = "^"
-mini2.TextColor3 = Color3.fromRGB(255, 255, 255)
+mini2.TextColor3 = Color3.fromRGB(255, 255, 255) -- 白色
 mini2.TextSize = 24
 mini2.Position = UDim2.new(0, 44, -1, 57)
 mini2.Visible = false
